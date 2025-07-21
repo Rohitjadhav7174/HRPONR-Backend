@@ -2,10 +2,22 @@ services:
   - type: web
     name: ecommerce-backend
     runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
+    pythonVersion: "3.9"  # Explicit Python version
+    buildCommand: |
+      python -m pip install --upgrade pip setuptools wheel
+      pip install -r requirements.txt
+    startCommand: python -m uvicorn main:app --host 0.0.0.0 --port 10000
     envVars:
       - key: MONGODB_URL
         value: mongodb+srv://Rohit:Rohit@cluster0.avcsol9.mongodb.net/
       - key: DATABASE_NAME
         value: ecommerce
+    healthCheckPath: /health
+    autoDeploy: yes  # Enable automatic deploys on git push
+    plan: free  # Start with free tier
+    
+    # Advanced scaling (optional for future)
+    scaling:
+      minInstances: 1
+      maxInstances: 1
+      memory: 512MB
